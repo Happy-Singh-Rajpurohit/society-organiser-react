@@ -25,38 +25,38 @@ const SeniorDashboard: React.FC = () => {
 
   const teamMembers = [
     {
-      name: 'Alex Johnson',
-      role: 'Lead Developer',
-      image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300',
+      name: 'Happy Singh Rajpurohit',
+      role: 'Frontend + Design + Backend',
+      image: 'happy.jpeg',
       social: {
-        github: 'https://github.com',
-        linkedin: 'https://linkedin.com',
-        twitter: 'https://twitter.com'
+        github: 'https://github.com/Happy-Singh-Rajpurohit',
+        linkedin: 'https://www.linkedin.com/in/happy-singh-rajpurohit/',
+        instagram: 'https://www.instagram.com/HappyRajpurohit10/'
       }
     },
     {
-      name: 'Sarah Chen',
-      role: 'UI/UX Designer',
+      name: 'Pulkit Sareen',
+      role: 'Frontend + Design + Task Section',
       image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300',
       social: {
         github: 'https://github.com',
         linkedin: 'https://linkedin.com',
-        instagram: 'https://instagram.com'
+        instagram: ''
       }
     },
     {
-      name: 'Mike Rodriguez',
-      role: 'Backend Engineer',
+      name: 'Yuvraj Jasuja',
+      role: 'Resource Section',
       image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=300',
       social: {
-        github: 'https://github.com',
-        linkedin: 'https://linkedin.com',
-        twitter: 'https://twitter.com'
+        github: 'https://github.com/YuvrajJasuja',
+        linkedin: 'https://www.linkedin.com/in/yuvraj-jasuja-0b2b04318/',
+        instagram: 'https://www.instagram.com/yuvrajjasuja/'
       }
     },
     {
-      name: 'Emily Davis',
-      role: 'Project Manager',
+      name: 'Abhishek Chopra',
+      role: 'Presentaion Builder',
       image: 'https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=300',
       social: {
         linkedin: 'https://linkedin.com',
