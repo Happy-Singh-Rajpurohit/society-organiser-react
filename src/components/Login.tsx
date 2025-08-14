@@ -163,11 +163,11 @@ const Login: React.FC = () => {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          {/* <div className="mt-6 text-center">
             <p className="text-gray-400 text-sm">
               Secure login powered by Firebase Authentication
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
 

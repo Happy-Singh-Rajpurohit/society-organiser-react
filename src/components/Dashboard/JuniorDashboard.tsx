@@ -6,6 +6,10 @@ import { Event, Announcement } from '../../types';
 import AnnouncementCard from './AnnouncementCard';
 import EventCard from './EventCard';
 import ResourcesSection from './ResourcesSection';
+import happyPic from '../../assets/happy.jpg';
+import yuvrajPic from '../../assets/yuvraj.jpg';
+import abhishekPic from '../../assets/abhishek.jpg';
+import pulkitPic from '../../assets/pulkit.jpg';
 
 const JuniorDashboard: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -13,43 +17,43 @@ const JuniorDashboard: React.FC = () => {
 
   const teamMembers = [
     {
-      name: 'Alex Johnson',
-      role: 'Lead Developer',
-      image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300',
+      name: 'Happy Singh Rajpurohit',
+      role: 'Frontend + Design + Backend',
+      image: happyPic,
       social: {
-        github: 'https://github.com',
-        linkedin: 'https://linkedin.com',
-        twitter: 'https://twitter.com'
+        github: 'https://github.com/Happy-Singh-Rajpurohit',
+        linkedin: 'https://www.linkedin.com/in/happy-singh-rajpurohit/',
+        instagram: 'https://www.instagram.com/HappyRajpurohit10/'
       }
     },
     {
-      name: 'Sarah Chen',
-      role: 'UI/UX Designer',
-      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300',
+      name: 'Pulkit Sareen',
+      role: 'Frontend + Design + Task Section',
+      image: pulkitPic,
       social: {
-        github: 'https://github.com',
-        linkedin: 'https://linkedin.com',
-        instagram: 'https://instagram.com'
+        github: 'https://github.com/Pulkit-Sareen',
+        linkedin: 'https://in.linkedin.com/in/pulkit-sareen-96350b25b',
+        instagram: 'https://www.instagram.com/pulkit.sareen.31/'
       }
     },
     {
-      name: 'Mike Rodriguez',
-      role: 'Backend Engineer',
-      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=300',
+      name: 'Yuvraj Jasuja',
+      role: 'Resource Section',
+      image: yuvrajPic,
       social: {
-        github: 'https://github.com',
-        linkedin: 'https://linkedin.com',
-        twitter: 'https://twitter.com'
+        github: 'https://github.com/YuvrajJasuja',
+        linkedin: 'https://www.linkedin.com/in/yuvraj-jasuja-0b2b04318/',
+        instagram: 'https://www.instagram.com/yuvrajjasuja/'
       }
     },
     {
-      name: 'Emily Davis',
-      role: 'Project Manager',
-      image: 'https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=300',
+      name: 'Abhishek Chopra',
+      role: 'Design + Ideation',
+      image: abhishekPic,
       social: {
-        linkedin: 'https://linkedin.com',
-        twitter: 'https://twitter.com',
-        instagram: 'https://instagram.com'
+        linkedin: 'http://www.linkedin.com/in/abhishek-chopra-b58144322',
+        github: 'https://github.com/Abhishek240514',
+        instagram: 'https://www.instagram.com/abhishek___chopra18/'
       }
     }
   ];
@@ -174,7 +178,7 @@ const JuniorDashboard: React.FC = () => {
                       <Linkedin className="h-5 w-5 text-gray-300 hover:text-white" />
                     </a>
                   )}
-                  {member.social.twitter && (
+                  {/* {member.social.twitter && (
                     <a
                       href={member.social.twitter}
                       target="_blank"
@@ -183,7 +187,7 @@ const JuniorDashboard: React.FC = () => {
                     >
                       <Twitter className="h-5 w-5 text-gray-300 hover:text-white" />
                     </a>
-                  )}
+                  )} */}
                   {member.social.instagram && (
                     <a
                       href={member.social.instagram}
@@ -244,7 +248,7 @@ const JuniorDashboard: React.FC = () => {
           <div className="text-center">
             <div className="flex justify-center items-center space-x-3 mb-4">
               <Users className="h-8 w-8 text-blue-500" />
-              <h3 className="text-2xl font-bold text-white">Society Organiser</h3>
+              <h3 className="text-2xl font-bold text-white">Society Sphere</h3>
             </div>
             <p className="text-gray-400 mb-6">Empowering student societies with modern organization tools</p>
             <div className="flex justify-center space-x-4 mb-6">
@@ -283,7 +287,7 @@ const JuniorDashboard: React.FC = () => {
             </div>
             <div className="border-t border-gray-700 pt-4">
               <p className="text-gray-500 text-sm">
-                © 2024 Society Organiser. All rights reserved. Built with ❤️ for student communities.
+                © 2025 Society Organiser. All rights reserved. Built with ❤️ by Happy | Pulkit | Yuvraj | Abhishek.
               </p>
             </div>
           </div>

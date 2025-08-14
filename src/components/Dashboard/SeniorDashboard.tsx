@@ -319,7 +319,7 @@ const SeniorDashboard: React.FC = () => {
           <div className="text-center">
             <div className="flex justify-center items-center space-x-3 mb-4">
               <Users className="h-8 w-8 text-blue-500" />
-              <h3 className="text-2xl font-bold text-white">Society Organiser</h3>
+              <h3 className="text-2xl font-bold text-white">Society Sphere</h3>
             </div>
             <p className="text-gray-400 mb-6">Empowering student societies with modern organization tools</p>
             <div className="flex justify-center space-x-4 mb-6">
@@ -358,7 +358,7 @@ const SeniorDashboard: React.FC = () => {
             </div>
             <div className="border-t border-gray-700 pt-4">
               <p className="text-gray-500 text-sm">
-                © 2024 Society Organiser. All rights reserved. Built with ❤️ for student communities.
+                © 2025 Society Organiser. All rights reserved. Built with ❤️ by Happy | Pulkit | Yuvraj | Abhishek.
               </p>
             </div>
           </div>
