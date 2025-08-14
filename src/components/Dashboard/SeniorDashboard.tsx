@@ -8,6 +8,11 @@ import EventCard from './EventCard';
 import CreateEventModal from './CreateEventModal';
 import CreateAnnouncementModal from './CreateAnnouncementModal';
 import ResourcesSection from './ResourcesSection';
+import happyPic from '../../assets/happy.jpg';
+import yuvrajPic from '../../assets/yuvraj.jpg';
+import abhishekPic from '../../assets/abhishek.jpg';
+import pulkitPic from '../../assets/pulkit.jpg';
+
 
 const SeniorDashboard: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -27,7 +32,7 @@ const SeniorDashboard: React.FC = () => {
     {
       name: 'Happy Singh Rajpurohit',
       role: 'Frontend + Design + Backend',
-      image: 'happy.jpeg',
+      image: happyPic,
       social: {
         github: 'https://github.com/Happy-Singh-Rajpurohit',
         linkedin: 'https://www.linkedin.com/in/happy-singh-rajpurohit/',
@@ -37,17 +42,17 @@ const SeniorDashboard: React.FC = () => {
     {
       name: 'Pulkit Sareen',
       role: 'Frontend + Design + Task Section',
-      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300',
+      image: pulkitPic,
       social: {
-        github: 'https://github.com',
-        linkedin: 'https://linkedin.com',
-        instagram: ''
+        github: 'https://github.com/Pulkit-Sareen',
+        linkedin: 'https://in.linkedin.com/in/pulkit-sareen-96350b25b',
+        instagram: 'https://www.instagram.com/pulkit.sareen.31/'
       }
     },
     {
       name: 'Yuvraj Jasuja',
       role: 'Resource Section',
-      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=300',
+      image: yuvrajPic,
       social: {
         github: 'https://github.com/YuvrajJasuja',
         linkedin: 'https://www.linkedin.com/in/yuvraj-jasuja-0b2b04318/',
@@ -56,12 +61,12 @@ const SeniorDashboard: React.FC = () => {
     },
     {
       name: 'Abhishek Chopra',
-      role: 'Presentaion Builder',
-      image: 'https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=300',
+      role: 'Design + Ideation',
+      image: abhishekPic,
       social: {
-        linkedin: 'https://linkedin.com',
-        twitter: 'https://twitter.com',
-        instagram: 'https://instagram.com'
+        linkedin: 'http://www.linkedin.com/in/abhishek-chopra-b58144322',
+        github: 'https://github.com/Abhishek240514',
+        instagram: 'https://www.instagram.com/abhishek___chopra18/'
       }
     }
   ];
