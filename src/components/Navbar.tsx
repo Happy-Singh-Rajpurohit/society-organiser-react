@@ -36,15 +36,15 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="bg-gray-800 shadow-lg border-b border-gray-700">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
             <Link to="/" className="flex items-center space-x-3">
               <Users className="h-8 w-8 text-blue-600" />
-              <h1 className="text-xl font-bold text-white">Society Sphere</h1>
+              <h1 className="text-lg sm:text-xl font-bold text-white">Society Sphere</h1>
             </Link>
             
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden lg:flex items-center space-x-1">
               {navItems.map(({ path, icon: Icon, label }) => (
                 <Link
                   key={path}
@@ -63,22 +63,47 @@ const Navbar: React.FC = () => {
           </div>
           
           {currentUser && (
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-300">Welcome, {currentUser.name}</span>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="hidden sm:flex items-center space-x-2">
+                <span className="text-xs sm:text-sm text-gray-300 truncate max-w-32 sm:max-w-none">Welcome, {currentUser.name}</span>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(currentUser.role)}`}>
+                  {currentUser.role}
+                </span>
+              </div>
+              <div className="sm:hidden">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(currentUser.role)}`}>
                   {currentUser.role}
                 </span>
               </div>
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
+                className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 text-xs sm:text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           )}
+        </div>
+        
+        {/* Mobile Navigation */}
+        <div className="lg:hidden border-t border-gray-700 py-2">
+          <div className="flex items-center justify-center space-x-1 overflow-x-auto">
+            {navItems.map(({ path, icon: Icon, label }) => (
+              <Link
+                key={path}
+                to={path}
+                className={`flex flex-col items-center space-y-1 px-2 py-2 rounded-md text-xs font-medium transition-colors min-w-0 ${
+                  location.pathname === path
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                <span className="truncate">{label}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </nav>

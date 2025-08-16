@@ -20,15 +20,15 @@ const AnnouncementCard: React.FC<AnnouncementCardProps> = ({ announcement, canEd
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-blue-300">
       <div className="flex justify-between items-start mb-3">
-        <h3 className="text-lg font-semibold text-gray-900">{announcement.title}</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2">{announcement.title}</h3>
         <div className="flex items-center space-x-2">
-          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(announcement.priority)}`}>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(announcement.priority)} whitespace-nowrap`}>
             {announcement.priority}
           </span>
           {canEdit && (
-            <div className="flex space-x-1">
+            <div className="flex space-x-1 ml-2">
               <button
                 onClick={() => onEdit?.(announcement)}
                 className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
@@ -46,16 +46,16 @@ const AnnouncementCard: React.FC<AnnouncementCardProps> = ({ announcement, canEd
         </div>
       </div>
       
-      <p className="text-gray-700 mb-4">{announcement.content}</p>
+      <p className="text-gray-700 mb-4 text-sm sm:text-base line-clamp-3 leading-relaxed">{announcement.content}</p>
       
-      <div className="flex items-center justify-between text-sm text-gray-500">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs sm:text-sm text-gray-500 space-y-2 sm:space-y-0">
         <div className="flex items-center space-x-2">
           <User className="h-4 w-4" />
-          <span>Posted by {announcement.createdBy}</span>
+          <span className="truncate">Posted by {announcement.createdBy}</span>
         </div>
         <div className="flex items-center space-x-2">
           <Calendar className="h-4 w-4" />
-          <span>{announcement.createdAt.toLocaleDateString()}</span>
+          <span className="whitespace-nowrap">{announcement.createdAt.toLocaleDateString()}</span>
         </div>
       </div>
     </div>
