@@ -73,14 +73,14 @@ const Navbar: React.FC = () => {
 
           {currentUser && (
             <div className="flex items-center space-x-1 md:space-x-3">
-              <button
+              {/* <button
                 onClick={toggleTheme}
                 className="flex items-center px-2 md:px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 dark:hover:bg-gray-700 rounded-md transition-colors"
                 title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               >
                 {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                 <span className="hidden md:inline text-sm ml-1">{isDark ? 'Light' : 'Dark'}</span>
-              </button>
+              </button> */}
 
               <button
                 onClick={() => setShowEditProfile(true)}
