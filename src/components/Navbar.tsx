@@ -71,6 +71,7 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
+          
           {currentUser && (
             <div className="flex items-center space-x-1 md:space-x-3">
               {/* <button
