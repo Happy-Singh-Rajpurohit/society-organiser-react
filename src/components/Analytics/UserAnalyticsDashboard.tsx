@@ -7,7 +7,9 @@ import {
   TrendingUp,
   Calendar,
   Award,
-  Activity
+  Activity,
+  Users,
+  Trophy
 } from 'lucide-react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -15,6 +17,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Task, Feedback, Attendance } from '../../types';
 import CircularProgress from './CircularProgress';
 import StatCard from './StatCard';
+import AllUsersAnalytics from './AllUsersAnalytics';
+import Leaderboard from './Leaderboard';
 
 interface UserAnalytics {
   totalTasks: number;
@@ -29,6 +33,8 @@ interface UserAnalytics {
 
 const UserAnalyticsDashboard: React.FC = () => {
   const { currentUser } = useAuth();
+  const [activeTab, setActiveTab] = useState<'my-analytics' | 'leaderboard'>('my-analytics');
+  const [showAllUsers, setShowAllUsers] = useState(false);
   const [analytics, setAnalytics] = useState<UserAnalytics>({
     totalTasks: 0,
     completedTasks: 0,
@@ -54,13 +60,22 @@ const UserAnalyticsDashboard: React.FC = () => {
     try {
       const tasksQuery = query(
         collection(db, 'tasks'),
-        where('assignedTo', '==', currentUser.name)
+        where('assignedToEmail', '==', currentUser.email)
       );
       const tasksSnapshot = await getDocs(tasksQuery);
       const tasks: Task[] = tasksSnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
+        title: doc.data().title,
+        description: doc.data().description,
+        eventId: doc.data().eventId,
+        domain: doc.data().domain,
+        priority: doc.data().priority,
+        status: doc.data().status,
+        assignedToEmail: doc.data().assignedToEmail,
+        assignedToName: doc.data().assignedToName,
         dueDate: doc.data().dueDate.toDate(),
+        createdByEmail: doc.data().createdByEmail,
+        createdByName: doc.data().createdByName,
         createdAt: doc.data().createdAt.toDate()
       }));
 
@@ -70,12 +85,17 @@ const UserAnalyticsDashboard: React.FC = () => {
 
       const attendanceQuery = query(
         collection(db, 'attendance'),
-        where('userId', '==', currentUser.uid)
+        where('userEmail', '==', currentUser.email)
       );
       const attendanceSnapshot = await getDocs(attendanceQuery);
       const attendanceRecords: Attendance[] = attendanceSnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
+        eventId: doc.data().eventId,
+        userEmail: doc.data().userEmail,
+        userName: doc.data().userName,
+        status: doc.data().status,
+        markedByEmail: doc.data().markedByEmail,
+        markedByName: doc.data().markedByName,
         markedAt: doc.data().markedAt.toDate()
       }));
 
@@ -85,7 +105,7 @@ const UserAnalyticsDashboard: React.FC = () => {
 
       const feedbackQuery = query(
         collection(db, 'feedback'),
-        where('userId', '==', currentUser.uid)
+        where('userEmail', '==', currentUser.email)
       );
       const feedbackSnapshot = await getDocs(feedbackQuery);
       const totalFeedbacks = feedbackSnapshot.size;
@@ -116,7 +136,13 @@ const UserAnalyticsDashboard: React.FC = () => {
     }
   };
 
-  if (loading) {
+  const isUserSenior = currentUser?.role && ['EB', 'EC'].includes(currentUser.role);
+
+  if (showAllUsers && isUserSenior) {
+    return <AllUsersAnalytics />;
+  }
+
+  if (loading && activeTab === 'my-analytics') {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-center h-96">
@@ -132,144 +158,169 @@ const UserAnalyticsDashboard: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <div className="flex items-center space-x-3 mb-2">
-          <Activity className="h-8 w-8 text-blue-500" />
-          <h1 className="text-3xl font-bold text-white dark:text-white">My Analytics Dashboard</h1>
-        </div>
-        <p className="text-gray-400 dark:text-gray-400">Track your progress and performance</p>
-      </div>
-
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-800 dark:to-gray-900
-                      rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 p-6 mb-8">
-        <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-          <div className="flex-shrink-0">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-              {currentUser?.name.charAt(0).toUpperCase()}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <div className="flex items-center space-x-3 mb-2">
+              <Activity className="h-8 w-8 text-blue-500" />
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analytics</h1>
             </div>
+            <p className="text-gray-600 dark:text-gray-400">Track your progress and compete on the leaderboard</p>
           </div>
-          <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl font-bold text-white dark:text-white mb-2">{currentUser?.name}</h2>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
-              <span className={`px-3 py-1 rounded-full text-sm font-medium text-white ${getRoleColor(currentUser?.role || 'Member')}`}>
-                {currentUser?.role}
-              </span>
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-700 text-gray-300">
-                {currentUser?.email}
-              </span>
+          {isUserSenior && (
+            <button
+              onClick={() => setShowAllUsers(true)}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Users className="h-5 w-5" />
+              <span>View All Users</span>
+            </button>
+          )}
+        </div>
+
+        <div className="flex space-x-1 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('my-analytics')}
+            className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === 'my-analytics'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <Activity className="h-4 w-4" />
+              <span>My Analytics</span>
             </div>
-            <div className="flex items-center justify-center md:justify-start space-x-2 text-gray-400">
-              <Calendar className="h-4 w-4" />
-              <span className="text-sm">Member since {currentUser?.createdAt.toLocaleDateString()}</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('leaderboard')}
+            className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === 'leaderboard'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <Trophy className="h-4 w-4" />
+              <span>Leaderboard</span>
             </div>
-          </div>
+          </button>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard
-          title="Total Tasks"
-          value={analytics.totalTasks}
-          icon={CheckSquare}
-          color="bg-blue-600"
-          subtitle={`${analytics.pendingTasks} pending`}
-        />
-        <StatCard
-          title="Completed Tasks"
-          value={analytics.completedTasks}
-          icon={Award}
-          color="bg-green-600"
-          subtitle={`${analytics.totalTasks - analytics.completedTasks} remaining`}
-        />
-        <StatCard
-          title="Events Attended"
-          value={`${analytics.attendedEvents}/${analytics.totalAttendance}`}
-          icon={UserCheck}
-          color="bg-purple-600"
-          subtitle={analytics.totalAttendance > 0 ? `${Math.round(analytics.attendanceRate)}% attendance` : 'No events yet'}
-        />
-        <StatCard
-          title="Feedback Given"
-          value={analytics.totalFeedbacks}
-          icon={MessageSquare}
-          color="bg-orange-600"
-          subtitle="Total submissions"
-        />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 mb-8">
+      {activeTab === 'my-analytics' && (
+        <>
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-800 dark:to-gray-900
-                        rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 p-6
-                        hover:shadow-xl hover:border-blue-500 dark:hover:border-blue-500
-                        transition-all duration-300">
-          <div className="flex items-center space-x-2 mb-6">
-            <TrendingUp className="h-5 w-5 text-blue-500" />
-            <h3 className="text-lg font-semibold text-white dark:text-white">Task Completion Rate</h3>
-          </div>
-          <div className="flex items-center justify-center">
-            <CircularProgress
-              percentage={analytics.taskCompletionRate}
-              size={150}
-              strokeWidth={10}
-              color="#3b82f6"
-              backgroundColor="#1f2937"
-            />
-          </div>
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              {analytics.completedTasks} completed out of {analytics.totalTasks} total tasks
-            </p>
+                        rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 p-6 mb-8">
+          <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+            <div className="flex-shrink-0">
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                {currentUser?.name.charAt(0).toUpperCase()}
+              </div>
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-2xl font-bold text-white dark:text-white mb-2">{currentUser?.name}</h2>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
+                <span className={`px-3 py-1 rounded-full text-sm font-medium text-white ${getRoleColor(currentUser?.role || 'Member')}`}>
+                  {currentUser?.role}
+                </span>
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-700 text-gray-300">
+                  {currentUser?.email}
+                </span>
+              </div>
+              <div className="flex items-center justify-center md:justify-start space-x-2 text-gray-400">
+                <Calendar className="h-4 w-4" />
+                <span className="text-sm">Member since {currentUser?.createdAt.toLocaleDateString()}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-800 dark:to-gray-900
-                        rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 p-6
-                        hover:shadow-xl hover:border-purple-500 dark:hover:border-purple-500
-                        transition-all duration-300">
-          <div className="flex items-center space-x-2 mb-6">
-            <UserCheck className="h-5 w-5 text-purple-500" />
-            <h3 className="text-lg font-semibold text-white dark:text-white">Attendance Rate</h3>
-          </div>
-          <div className="flex items-center justify-center">
-            <CircularProgress
-              percentage={analytics.attendanceRate}
-              size={150}
-              strokeWidth={10}
-              color="#a855f7"
-              backgroundColor="#1f2937"
-            />
-          </div>
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              {analytics.attendedEvents} attended out of {analytics.totalAttendance} total events
-            </p>
-          </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+          <StatCard
+            title="Total Tasks"
+            value={analytics.totalTasks}
+            icon={CheckSquare}
+            color="bg-blue-600"
+            subtitle={`${analytics.pendingTasks} pending`}
+          />
+          <StatCard
+            title="Completed Tasks"
+            value={analytics.completedTasks}
+            icon={Award}
+            color="bg-green-600"
+            subtitle={`${analytics.totalTasks - analytics.completedTasks} remaining`}
+          />
+          <StatCard
+            title="Events Attended"
+            value={`${analytics.attendedEvents}/${analytics.totalAttendance}`}
+            icon={UserCheck}
+            color="bg-purple-600"
+            subtitle={analytics.totalAttendance > 0 ? `${Math.round(analytics.attendanceRate)}% attendance` : 'No events yet'}
+          />
+          <StatCard
+            title="Feedback Given"
+            value={analytics.totalFeedbacks}
+            icon={MessageSquare}
+            color="bg-orange-600"
+            subtitle="Total submissions"
+          />
         </div>
-      </div>
 
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-800 dark:to-gray-900
-                      rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-white dark:text-white mb-4">Performance Summary</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
-            <span className="text-gray-300">Task Performance</span>
-            <span className={`font-semibold ${analytics.taskCompletionRate >= 75 ? 'text-green-400' : analytics.taskCompletionRate >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
-              {analytics.taskCompletionRate >= 75 ? 'Excellent' : analytics.taskCompletionRate >= 50 ? 'Good' : 'Needs Improvement'}
-            </span>
+        <div className="grid gap-6 md:grid-cols-2 mb-8">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-800 dark:to-gray-900
+                          rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 p-6
+                          hover:shadow-xl hover:border-blue-500 dark:hover:border-blue-500
+                          transition-all duration-300">
+            <div className="flex items-center space-x-2 mb-6">
+              <TrendingUp className="h-5 w-5 text-blue-500" />
+              <h3 className="text-lg font-semibold text-white dark:text-white">Task Completion Rate</h3>
+            </div>
+            <div className="flex items-center justify-center">
+              <CircularProgress
+                percentage={analytics.taskCompletionRate}
+                size={150}
+                strokeWidth={10}
+                color="#3b82f6"
+                backgroundColor="#1f2937"
+              />
+            </div>
+            <div className="mt-6 text-center">
+              <p className="text-gray-400 text-sm">
+                {analytics.completedTasks} completed out of {analytics.totalTasks} total tasks
+              </p>
+            </div>
           </div>
-          <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
-            <span className="text-gray-300">Attendance Performance</span>
-            <span className={`font-semibold ${analytics.attendanceRate >= 80 ? 'text-green-400' : analytics.attendanceRate >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
-              {analytics.attendanceRate >= 80 ? 'Excellent' : analytics.attendanceRate >= 60 ? 'Good' : 'Needs Improvement'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
-            <span className="text-gray-300">Feedback Contributions</span>
-            <span className={`font-semibold ${analytics.totalFeedbacks >= 5 ? 'text-green-400' : analytics.totalFeedbacks >= 3 ? 'text-yellow-400' : 'text-gray-400'}`}>
-              {analytics.totalFeedbacks >= 5 ? 'Active' : analytics.totalFeedbacks >= 3 ? 'Moderate' : 'Low'}
-            </span>
+
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-800 dark:to-gray-900
+                          rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 p-6
+                          hover:shadow-xl hover:border-purple-500 dark:hover:border-purple-500
+                          transition-all duration-300">
+            <div className="flex items-center space-x-2 mb-6">
+              <UserCheck className="h-5 w-5 text-purple-500" />
+              <h3 className="text-lg font-semibold text-white dark:text-white">Attendance Rate</h3>
+            </div>
+            <div className="flex items-center justify-center">
+              <CircularProgress
+                percentage={analytics.attendanceRate}
+                size={150}
+                strokeWidth={10}
+                color="#a855f7"
+                backgroundColor="#1f2937"
+              />
+            </div>
+            <div className="mt-6 text-center">
+              <p className="text-gray-400 text-sm">
+                {analytics.attendedEvents} attended out of {analytics.totalAttendance} total events
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+        </>
+      )}
+
+      {activeTab === 'leaderboard' && (
+        <Leaderboard />
+      )}
     </div>
   );
 };

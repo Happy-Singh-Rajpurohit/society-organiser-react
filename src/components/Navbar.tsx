@@ -1,11 +1,16 @@
-import React from 'react';
-import { LogOut, Users, Home, CheckSquare, MessageSquare, UserCheck, GraduationCap, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { LogOut, Users, Home, CheckSquare, MessageSquare, UserCheck, GraduationCap, Activity, User as UserIcon, Sun, Moon } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import EditProfileModal from './Profile/EditProfileModal';
 
 const Navbar: React.FC = () => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, refreshUser } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
+  const [showEditProfile, setShowEditProfile] = useState(false);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -13,6 +18,11 @@ const Navbar: React.FC = () => {
       console.error('Failed to logout:', error);
     }
   };
+
+  const handleProfileUpdate = async () => {
+    await refreshUser();
+  };
+
   const isUserSenior = currentUser?.role && ['EB', 'EC', 'Core'].includes(currentUser.role);
   const navItems = [
     { path: '/', icon: Home, label: 'Dashboard' },
@@ -22,6 +32,7 @@ const Navbar: React.FC = () => {
     { path: '/feedback', icon: MessageSquare, label: 'Feedback' },
     ...(isUserSenior ? [{ path: '/attendance', icon: UserCheck, label: 'Attendance' }] : [])
   ];
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'EB': return 'bg-purple-100 text-purple-800';
@@ -31,6 +42,7 @@ const Navbar: React.FC = () => {
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+
   return (
     <nav className="bg-gray-800 dark:bg-gray-800 bg-white shadow-lg border-b border-gray-700 dark:border-gray-700 border-gray-200 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
@@ -40,7 +52,7 @@ const Navbar: React.FC = () => {
               <Users className="h-8 w-8 text-blue-600" />
               <h1 className="text-lg sm:text-xl font-bold text-white dark:text-white text-gray-900">Society Sphere</h1>
             </Link>
-            
+
             <div className="hidden lg:flex items-center space-x-1">
               {navItems.map(({ path, icon: Icon, label }) => (
                 <Link
@@ -58,31 +70,75 @@ const Navbar: React.FC = () => {
               ))}
             </div>
           </div>
-          
+
           {currentUser && (
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="hidden sm:flex items-center space-x-2">
-                <span className="text-xs sm:text-sm text-gray-300 dark:text-gray-300 text-gray-600 truncate max-w-32 sm:max-w-none">Welcome, {currentUser.name}</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(currentUser.role)}`}>
+            <div className="flex items-center space-x-1 md:space-x-3">
+              <button
+                onClick={toggleTheme}
+                className="flex items-center px-2 md:px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 dark:hover:bg-gray-700 rounded-md transition-colors"
+                title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                <span className="hidden md:inline text-sm ml-1">{isDark ? 'Light' : 'Dark'}</span>
+              </button>
+
+              <button
+                onClick={() => setShowEditProfile(true)}
+                className="hidden md:flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors group"
+                title="Edit Profile"
+              >
+                {currentUser.photoURL ? (
+                  <img
+                    src={currentUser.photoURL}
+                    alt="Profile"
+                    className="h-8 w-8 rounded-full object-cover border-2 border-blue-500"
+                  />
+                ) : (
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+                    {currentUser.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex flex-col text-left">
+                  <span className="text-xs font-medium text-gray-300">Welcome</span>
+                  <span className="text-sm font-semibold text-white group-hover:text-blue-400 transition-colors truncate max-w-[100px]">
+                    {currentUser.name}
+                  </span>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getRoleColor(currentUser.role)}`}>
                   {currentUser.role}
                 </span>
-              </div>
-              <div className="sm:hidden">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(currentUser.role)}`}>
-                  {currentUser.role}
-                </span>
-              </div>
+              </button>
+
+              <button
+                onClick={() => setShowEditProfile(true)}
+                className="md:hidden flex items-center px-2 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
+                title="Edit Profile"
+              >
+                {currentUser.photoURL ? (
+                  <img
+                    src={currentUser.photoURL}
+                    alt="Profile"
+                    className="h-7 w-7 rounded-full object-cover border-2 border-blue-500"
+                  />
+                ) : (
+                  <div className="h-7 w-7 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+                    {currentUser.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </button>
+
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 text-xs sm:text-sm text-gray-300 dark:text-gray-300 text-gray-600 hover:text-white dark:hover:text-white hover:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                className="flex items-center px-2 md:px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 dark:hover:bg-gray-700 rounded-md transition-colors"
+                title="Logout"
               >
                 <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden md:inline text-sm ml-1">Logout</span>
               </button>
             </div>
           )}
         </div>
-        
+
         {/* Mobile Navigation */}
         <div className="lg:hidden border-t border-gray-700 dark:border-gray-700 border-gray-200 py-2">
           <div className="flex items-center justify-center space-x-1 overflow-x-auto">
@@ -103,6 +159,14 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {showEditProfile && (
+        <EditProfileModal
+          isOpen={showEditProfile}
+          onClose={() => setShowEditProfile(false)}
+          onProfileUpdated={handleProfileUpdate}
+        />
+      )}
     </nav>
   );
 };

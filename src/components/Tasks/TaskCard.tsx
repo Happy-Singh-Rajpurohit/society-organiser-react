@@ -1,15 +1,17 @@
 import React from 'react';
-import { Calendar, User, Building, Edit, Trash2 } from 'lucide-react';
+import { Calendar, User, Building, Edit, Trash2, CheckCircle } from 'lucide-react';
 import { Task } from '../../types';
 
 interface TaskCardProps {
   task: Task;
   canEdit?: boolean;
+  canDelete?: boolean;
   onEdit?: (task: Task) => void;
   onDelete?: (taskId: string) => void;
+  onMarkComplete?: (task: Task) => void;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, canEdit, onEdit, onDelete }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, canEdit, canDelete, onEdit, onDelete, onMarkComplete }) => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'High': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800';
@@ -36,22 +38,38 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, canEdit, onEdit, onDelete }) 
       
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{task.title}</h3>
-        {canEdit && (
-          <div className="flex space-x-1">
+        <div className="flex space-x-1">
+          {task.status !== 'Completed' && (
+            <button
+              onClick={() => {
+                const completedTask = { ...task, status: 'Completed' as const };
+                onMarkComplete?.(completedTask);
+              }}
+              className="p-1 text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+              title="Mark as Complete"
+            >
+              <CheckCircle className="h-4 w-4" />
+            </button>
+          )}
+          {canEdit && (
             <button
               onClick={() => onEdit?.(task)}
               className="p-1 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              title="Edit Task"
             >
               <Edit className="h-4 w-4" />
             </button>
+          )}
+          {canDelete && (
             <button
               onClick={() => onDelete?.(task.id)}
               className="p-1 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+              title="Delete Task"
             >
               <Trash2 className="h-4 w-4" />
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       
       <p className="text-gray-700 dark:text-gray-300 mb-4">{task.description}</p>
@@ -76,12 +94,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, canEdit, onEdit, onDelete }) 
         </div>
         <div className="flex items-center space-x-2">
           <User className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-          <span>Created by {task.createdBy}</span>
+          <span>Created by {task.createdByName}</span>
         </div>
-        {task.assignedTo && (
+        {task.assignedToEmail && task.assignedToName && (
           <div className="flex items-center space-x-2">
             <Building className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-            <span>Assigned to {task.assignedTo}</span>
+            <span>Assigned to {task.assignedToName}</span>
           </div>
         )}
       </div>

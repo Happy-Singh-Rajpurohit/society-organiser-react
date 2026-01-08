@@ -260,7 +260,7 @@ const JuniorDashboard: React.FC = () => {
               <h3 className="text-xl sm:text-2xl font-bold text-white dark:text-white text-gray-900">Society Sphere</h3>
             </div>
             <p className="text-gray-400 dark:text-gray-400 text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Empowering student societies with modern organization tools</p>
-            <div className="flex justify-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
+            {/* <div className="flex justify-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
               <a
                 href="https://github.com"
                 target="_blank"
@@ -293,7 +293,7 @@ const JuniorDashboard: React.FC = () => {
               >
                 <Instagram className="h-5 w-5 sm:h-6 sm:w-6 text-white dark:text-white text-gray-600" />
               </a>
-            </div>
+            </div> */}
             <div className="border-t border-gray-700 dark:border-gray-700 border-gray-200 pt-4">
               <p className="text-gray-500 dark:text-gray-500 text-gray-400 text-xs sm:text-sm">
                 © 2025 Society Organiser. All rights reserved. Built with ❤️ by Happy | Pulkit | Yuvraj | Abhishek.

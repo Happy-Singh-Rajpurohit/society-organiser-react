@@ -3,6 +3,9 @@ export interface User {
   email: string;
   role: 'EB' | 'EC' | 'Core' | 'Member';
   name: string;
+  shortName?: string;
+  photoURL?: string;
+  points?: number;
   createdAt: Date;
 }
 
@@ -27,16 +30,19 @@ export interface Task {
   domain: string;
   priority: 'High' | 'Medium' | 'Low';
   status: 'Upcoming' | 'Today' | 'Completed';
-  assignedTo?: string;
+  assignedToEmail?: string;
+  assignedToName?: string;
   dueDate: Date;
-  createdBy: string;
+  createdByEmail: string;
+  createdByName: string;
   createdAt: Date;
 }
 
 export interface Feedback {
   id: string;
   eventId: string;
-  userId: string;
+  userEmail: string;
+  userName: string;
   rating: number;
   comments: string;
   createdAt: Date;
@@ -45,9 +51,11 @@ export interface Feedback {
 export interface Attendance {
   id: string;
   eventId: string;
-  userId: string;
+  userEmail: string;
+  userName: string;
   status: 'Present' | 'Absent';
-  markedBy: string;
+  markedByEmail: string;
+  markedByName: string;
   markedAt: Date;
 }
 

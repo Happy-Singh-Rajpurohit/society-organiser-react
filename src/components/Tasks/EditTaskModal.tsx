@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
-import { collection, addDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { X, Save } from 'lucide-react';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { useAuth } from '../../contexts/AuthContext';
-import { Event } from '../../types';
+import { Task, Event } from '../../types';
 import UserAutoComplete from '../common/UserAutoComplete';
 
-interface CreateTaskModalProps {
+interface EditTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
+  task: Task | null;
   events: Event[];
-  onTaskCreated: () => void;
+  onTaskUpdated: () => void;
 }
 
-const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
+const EditTaskModal: React.FC<EditTaskModalProps> = ({
   isOpen,
   onClose,
+  task,
   events,
-  onTaskCreated
+  onTaskUpdated
 }) => {
-  const { currentUser } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [eventId, setEventId] = useState('');
@@ -30,14 +30,31 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   const [assignedToName, setAssignedToName] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title);
+      setDescription(task.description);
+      setEventId(task.eventId);
+      setDomain(task.domain);
+      setPriority(task.priority);
+      setStatus(task.status);
+      setAssignedToEmail(task.assignedToEmail || '');
+      setAssignedToName(task.assignedToName || '');
+      setDueDate(task.dueDate.toISOString().split('T')[0]);
+      setError('');
+    }
+  }, [task]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser) return;
+    if (!task) return;
 
     setLoading(true);
+    setError('');
     try {
-      await addDoc(collection(db, 'tasks'), {
+      await updateDoc(doc(db, 'tasks', task.id), {
         title,
         description,
         eventId,
@@ -47,36 +64,25 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
         assignedToEmail: assignedToEmail || null,
         assignedToName: assignedToName || null,
         dueDate: new Date(dueDate),
-        createdByEmail: currentUser.email,
-        createdByName: currentUser.name,
-        createdAt: new Date()
+        updatedAt: new Date()
       });
 
-      onTaskCreated();
+      onTaskUpdated();
       onClose();
-
-      setTitle('');
-      setDescription('');
-      setEventId('');
-      setDomain('');
-      setPriority('Medium');
-      setStatus('Upcoming');
-      setAssignedToEmail('');
-      setAssignedToName('');
-      setDueDate('');
-    } catch (error) {
-      console.error('Error creating task:', error);
+    } catch (err) {
+      console.error('Error updating task:', err);
+      setError('Failed to update task. Please try again.');
     }
     setLoading(false);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !task) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Create New Task</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Edit Task</h2>
           <button
             onClick={onClose}
             className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors"
@@ -84,6 +90,12 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
             <X className="h-6 w-6" />
           </button>
         </div>
+
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-4">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -227,9 +239,10 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               type="submit"
               disabled={loading}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg
-                         hover:bg-blue-700 transition-colors disabled:opacity-50"
+                         hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
             >
-              {loading ? 'Creating...' : 'Create Task'}
+              <Save className="h-4 w-4" />
+              <span>{loading ? 'Saving...' : 'Save Changes'}</span>
             </button>
           </div>
         </form>
@@ -238,4 +251,4 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   );
 };
 
-export default CreateTaskModal;
+export default EditTaskModal;
